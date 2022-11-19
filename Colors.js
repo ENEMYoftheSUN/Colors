@@ -76,6 +76,19 @@ class Colors
 
 
 	/**
+	 * Instanciation basée sur le nom CSS de la couleur ('blue', 'AntiqueWhite', ...)
+	 * @param {string} name
+	 * @return {Colors}
+	 */
+	static fromColorName (name)
+	{
+		const c = document.createElement ('canvas').getContext ('2d');
+		c.fillStyle = name;
+		return Colors.fromString (c.fillStyle);
+	}
+
+
+	/**
 	 *
 	 * @param {number} h float 0.0-360.0
 	 * @param {number} s float 0.0-1.0
@@ -121,11 +134,31 @@ class Colors
 
 	/**
 	 *
+	 * @return {number[]}
+	 */
+	getRGBAasArray ()
+	{
+		return Object.values (this.getRGBA ());
+	}
+
+
+	/**
+	 *
 	 * @return {iNORMALIZED}
 	 */
 	getNormalized ()
 	{
 		return this.normalized;
+	}
+
+
+	/**
+	 *
+	 * @return {number[]}
+	 */
+	getNormalizedAsArray ()
+	{
+		return Object.values (this.getNormalized ());
 	}
 
 
@@ -141,11 +174,31 @@ class Colors
 
 	/**
 	 *
+	 * @return {number[]}
+	 */
+	getHexaAsArray ()
+	{
+		return Object.values (this.getHexa ());
+	}
+
+
+	/**
+	 *
 	 * @return {iHSLA}
 	 */
 	getHSLA ()
 	{
 		return this.hsla;
+	}
+
+
+	/**
+	 *
+	 * @return {number[]}
+	 */
+	getHSLAasArray ()
+	{
+		return Object.values (this.getHSLA ());
 	}
 
 
@@ -355,6 +408,58 @@ class Colors
 
 	/**
 	 *
+	 * @param {number} value -100 - 100 Pourcentage (entre -100 et 100%) de luminosité en plus à appliquer
+	 * @param {boolean} applyToAlpha Si vrai, l'opération s'applique aussi au canal alpha
+	 * @return {Colors}
+	 */
+	lighten (value, applyToAlpha = false)
+	{
+		value = this._clamp (value, -100, 100);
+		const L = this.getHSLA ().L;
+		const K = L * value / 100;
+		this.setHslaL (L + K);
+		if (applyToAlpha)
+		{
+			this.setHslaA (this.getHSLA ().A + K);
+		}
+		return this;
+	}
+
+
+	/**
+	 *
+	 * @param {number} value -100 - 100 Pourcentage (entre -100 et 100%) de luminosité en moins à appliquer
+	 * @param {boolean} applyToAlpha Si vrai, l'opération s'applique aussi au canal alpha
+	 * @return {Colors}
+	 */
+	darken (value, applyToAlpha = false)
+	{
+		return this.lighten (-value, applyToAlpha);
+	}
+
+
+	/**
+	 *
+	 * @return {Colors}
+	 */
+	clone ()
+	{
+		return new Colors (...this.getRGBAasArray ());
+	}
+
+
+	/**
+	 *
+	 * @return {Colors}
+	 */
+	getComplementaryColor ()
+	{
+		return this.clone ().setHslaH (this.getHSLA ().H + 180);
+	}
+
+
+	/**
+	 *
 	 * @param {number} value float 0.0-360.0
 	 * @return {Colors}
 	 */
@@ -456,7 +561,7 @@ class Colors
 	 *
 	 * @return {string}
 	 */
-	toCSS_hexA ()
+	toCSS_hexa ()
 	{
 		return this.toCSS_hex () + this.hexa.A;
 	}
@@ -486,31 +591,37 @@ class Colors
 
 
 	/**
-	 *
+	 * @private
 	 */
 	_calcFromRGBA ()
 	{
-		this._setNormalized (
-			this.rgba.R / 255,
-			this.rgba.G / 255,
-			this.rgba.B / 255,
-			this.rgba.A / 255
-		);
+		this._normalizedFromRgba ();
 
 		this._setHexaFromRGBA (
 			this.getRGBA ()
 		);
 
-		this._setHSLA (
-			...Object.values (
-				this._normalized2hsla (this.getNormalized ())
-			)
-		);
+		this._HSLAfromNormalized ();
 	}
 
 
 	/**
-	 *
+	 * @private
+	 */
+	_calcFromNormalized ()
+	{
+		this._RGBAfromNormalized ();
+
+		this._setHexaFromRGBA (
+			this.getRGBA ()
+		);
+
+		this._HSLAfromNormalized ();
+	}
+
+
+	/**
+	 * @private
 	 */
 	_calcFromHSLA ()
 	{
@@ -523,12 +634,7 @@ class Colors
 			normalized.A
 		);
 
-		this._setRGBA (
-			this.normalized.R * 255,
-			this.normalized.G * 255,
-			this.normalized.B * 255,
-			this.normalized.A * 255
-		);
+		this._RGBAfromNormalized ();
 
 		this._setHexaFromRGBA (
 			this.getRGBA ()
@@ -537,31 +643,7 @@ class Colors
 
 
 	/**
-	 *
-	 */
-	_calcFromNormalized ()
-	{
-		this._setRGBA (
-			this.normalized.R * 255,
-			this.normalized.G * 255,
-			this.normalized.B * 255,
-			this.normalized.A * 255
-		);
-
-		this._setHexaFromRGBA (
-			this.getRGBA ()
-		);
-
-		this._setHSLA (
-			...Object.values (
-				this._normalized2hsla (this.getNormalized ())
-			)
-		);
-	}
-
-
-	/**
-	 *
+	 * @private
 	 */
 	_calcFromHexa ()
 	{
@@ -572,17 +654,52 @@ class Colors
 			parseInt (this.hexa.A, 16)
 		);
 
+		this._normalizedFromRgba ();
+
+		this._HSLAfromNormalized ();
+	}
+
+
+	/**
+	 *
+	 * @private
+	 */
+	_normalizedFromRgba ()
+	{
 		this._setNormalized (
 			this.rgba.R / 255,
 			this.rgba.G / 255,
 			this.rgba.B / 255,
 			this.rgba.A / 255
 		);
+	}
 
+
+	/**
+	 *
+	 * @private
+	 */
+	_HSLAfromNormalized ()
+	{
 		this._setHSLA (
 			...Object.values (
 				this._normalized2hsla (this.getNormalized ())
 			)
+		);
+	}
+
+
+	/**
+	 *
+	 * @private
+	 */
+	_RGBAfromNormalized ()
+	{
+		this._setRGBA (
+			this.normalized.R * 255,
+			this.normalized.G * 255,
+			this.normalized.B * 255,
+			this.normalized.A * 255
 		);
 	}
 
