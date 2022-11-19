@@ -15,10 +15,7 @@
 			console.log (color.toCSS_rgba ());
 			console.log (color.toCSS_hsl ());
 			console.log (color.toCSS_hsla ());
-			const hsla = color.getHSL ();
-			console.log (color._hsla2rgba (hsla.H, hsla.S, hsla.L, hsla.A));
-
-			console.log (color.setRgbaR (255).toCSS_hsla ());
+			console.log (Colors.fromString ('#123456').getRGBA ());
 		</script>
 	</body>
 </html>
