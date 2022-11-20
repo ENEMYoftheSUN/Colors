@@ -63,7 +63,7 @@ class Colors
 	 * @param {string} cssColor (avec ou sans le préfixe "#") : "RRGGBB", "RRGGBBAA", "RGB", "RGBA". Valeurs comprises entre "0"-"F" ou "00"-FF"
 	 * @return {Colors}
 	 */
-	static fromString (cssColor)
+	static fromString (cssColor = '000')
 	{
 		cssColor = cssColor.trim ().replace ('#', '');
 		const values = cssColor.length === 3 || cssColor.length === 4	// format "RGB" ou "RGBA"
@@ -71,6 +71,7 @@ class Colors
 					   : cssColor.length === 6 || cssColor.length === 8			// format "RRGGBB" ou "RRGGBBAA"
 						 ? cssColor.match (/.{0,2}/g).filter (Boolean)
 						 : [ '00', '00', '00', 'FF' ];
+
 		return ( new Colors () ).setHexa (...values);
 	}
 
@@ -96,7 +97,7 @@ class Colors
 	 * @param {number} a float 0.0-1.0
 	 * @return {Colors}
 	 */
-	static fromHSLA (h, s, l, a = 1.0)
+	static fromHSLA (h = 0, s = 0, l = 0, a = 1.0)
 	{
 		return ( new Colors () ).setHSLA (h, s, l, a);
 	}
