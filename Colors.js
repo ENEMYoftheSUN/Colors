@@ -52,7 +52,7 @@ class Colors
 	 * @param {string} a "0"-"F" ou "00"-FF"
 	 * @return {Colors}
 	 */
-	static fromHexa (r = '', g = '', b = '', a = 'FF')
+	static fromHexa (r = '00', g = '00', b = '00', a = 'FF')
 	{
 		return ( new Colors () ).setHexa (r, g, b, a);
 	}
@@ -80,7 +80,7 @@ class Colors
 	 * @param {string} name
 	 * @return {Colors}
 	 */
-	static fromColorName (name)
+	static fromColorName (name = 'black')
 	{
 		const c = document.createElement ('canvas').getContext ('2d');
 		c.fillStyle = name;
@@ -548,22 +548,23 @@ class Colors
 
 
 	/**
-	 *
+	 * @param {boolean} noPrefix
 	 * @return {string}
+	 * @param {boolean} noPrefix
 	 */
-	toCSS_hex ()
+	toCSS_hex (noPrefix = false)
 	{
-		return `#${ this.hexa.R }${ this.hexa.G }${ this.hexa.B }`;
+		return `${ noPrefix ? '' : '#' }${ this.hexa.R }${ this.hexa.G }${ this.hexa.B }`;
 	}
 
 
 	/**
-	 *
+	 * @param {boolean} noPrefix
 	 * @return {string}
 	 */
-	toCSS_hexa ()
+	toCSS_hexa (noPrefix = false)
 	{
-		return this.toCSS_hex () + this.hexa.A;
+		return `${ this.toCSS_hex (noPrefix) }${ this.hexa.A }`;
 	}
 
 

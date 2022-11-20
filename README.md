@@ -1,116 +1,125 @@
-Simple gestion des couleurs en JS.
+Simple gestion des couleurs en JS (ES6).  
+Pas de dépendances, et peut être facilement adapté pour fonctionner sous forme de module.
 
 # Bases
 
+Instanciation à partir des valeurs RGBA. Par défaut chaque valeur si non précisé vaut 0, sauf le canal alpha qui est à 255.  
+`new Colors ([R = 0], [G = 0], [B = 0], [A = 255]);`  
 
-A partir de valeurs RGB. Les composants doivent être compris entre 0 et 255.  
-```const color = new Colors (34, 88, 200);```
-
-Le canal alpha est par défaut à 255, mais on peut le préciser si nécessaire.  
+Exemples :  
+```const color = new Colors ();```  
+```const color = new Colors (34, 88, 200);```  
 ```const color = new Colors (34, 88, 200, 145);```
 
-On peut alors convertir la couleur dans différents formats, à savoir en RGBA, en héxadécimal, en HSLA ou en version normalisée (vecteur), et celà dans tous les sens.  
+On peut alors obtenir et/ou convertir la couleur dans différents formats : en RGBA, en héxadécimal, en HSLA ou en version normalisée (vecteur).  
 
 ##### RGBA  
-Valeurs entières comprises entre 0 et 255 :  
-```color.getRGBA ();    // { R: 34, G: 88, B: 200, A: 145 }```  
-```color.getRGBAasArray (); // [ 34, 88, 200, 145 ]```   
+Valeurs entières comprises entre 0 et 255.
+* `getRGBA ()` : retourne un objet de type `{ R: 34, G: 88, B: 200, A: 145 }`
+* `getRGBAasArray ()` : retourne un array `[ 34, 88, 200, 145 ]`
+ 
+Exemple :  
+```const color = new Colors (34, 88, 200, 145);```  
+```color.getRGBA ();```  
 
+  
 ##### Normalized
-Valeurs flottantes comprises entre 0 et 1 :  
-```color.getNormalized (); // { R: 0.13333333333333333, G: 0.34509803921568627, B: 0.7843137254901961, A: 0.5686274509803921 }```  
-```color.getNormalizedAsArray (); // [ 0.13333333333333333, 0.34509803921568627, 0.7843137254901961, 0.5686274509803921 ]```  
+Valeurs flottantes comprises entre 0 et 1 :
+* `getNormalized ()` : retourne un objet de type `{ R: 0.13333333333333333, G: 0.34509803921568627, B: 0.7843137254901961, A: 0.5686274509803921 }`
+* `getNormalizedAsArray ()`
+
 
 ##### Hexa
-Valeurs comprises entre "00" et "FF" (en majuscule) :  
-```color.getHexa (); // { R: "22", G: "58", B: "C8", A: "91" }```      
-```color.getHexaAsArray (); // [ "22", "58", "C8", "91" ]```  
+Texte en majuscule sur 2 caractères, compris entre "00" et "FF" :  
+* `getHexa ()` : retourne un objet de type `{ R: "22", G: "58", B: "C8", A: "91" }`
+* `getHexaAsArray ()`
+
 
 ##### HSLA
-La valeur H (teinte) est en degré et est un flottant compris entre 0 et 360, les autres composantes sont aussi des flottants mais compris entre 0 et 1.  
-```color.getHSLA (); // { H: 220.48192771084337, S: 0.7094017094017094, L: 0.4588235294117647, A: 0.5686274509803921 }```        
-```color.getHSLAasArray (); // [ 220.48192771084337, 0.7094017094017094, 0.4588235294117647, 0.5686274509803921 ]```  
+Valeurs flottantes comprises entre 0 et 1, sauf pour H qui est en degré et est compris entre 0 et 360.  
+* `getHSLA ()` : retourne un objet de type `{ H: 220.48192771084337, S: 0.7094017094017094, L: 0.4588235294117647, A: 0.5686274509803921 }`
+* `getHSLAasArray ()`
+
 
 # Instanciations avancées
-On peut utiliser le format de son choix pour créer sa couleur. Les fourchettes de valeurs et les types sont les mêmes que ceux vu plus haut.  
-Si le canal alpha est omis, il prendra toujours sa valeur maximales selon le format (255, "FF" ou 1.0).
+On peut instancier la classe à partir d'autres format que le RGBA.  
 
-```const color = Colors.fromNormalized (.5, .5, .5);```  
-```color.getRGBA (); // { R: 128, G: 128, B: 128, A: 255 }```    
+* `Colors.fromNormalized ([R = 0.0], [G = 0.0], [B = 0.0], [A = 1.0]);`
+* `Colors.fromHSLA ([H = 0.0], [S = 0.0], [L = 0.0], [A = 1.0]);`
+* `Colors.fromHexa ([R = "00"|"0"], [R = "00"|"0"], [B = "00"|"0"], [A = "FF"|"F"]);` : on peut utiliser un caractère au lieu de deux. Par exemple, "C" est vu comme "CC", mais "0C" est bien vu comme "0C".
+* `Colors.fromString ("[#]RRGGBB");` : le préfixe "#" n'est pas obligatoire
+* `Colors.fromString ("[#]RGB");`
+* `Colors.fromString ("[#]RRGGBBAA");`
+* `Colors.fromString ("[#]RGBA");`
+* `Colors.fromColorName ("[colorName = black]");` : si la couleur n'existe pas en CSS, c'est "black" qui sera renvoyé.
 
-```const color = Colors.fromHSLA (220.5, .709, .458);```  
-```color.getRGBA (); // { R: 34, G: 88, B: 200, A: 255 }```  
+Exemples :   
+```Colors.fromNormalized (.5, .5, .5).getRGBA (); // { R: 128, G: 128, B: 128, A: 255 }```  
+```Colors.fromHexa ("10", "0C", "C").getHexa (); // { R: "10", G: "0C", B: "CC", A: "FF" }```  
+```Colors.fromString ("#100CCC77").getHexa (); // { R: "10", G: "0C", B: "CC", A: "77" }```  
+```Colors.fromString ("9A22").getHexa (); // { R: "99", G: "AA", B: "22", A: "22" }```  
+```Colors.fromColorname ("indigo").getRGBA (); // { R: 75, G: 0, B: 130, A: 255 }```  
 
-On peut bien entendu utiliser directement du CSS. Soit composante par composante avec `fromHexa` :    
-```const color = Colors.fromHexa ("10", "0C", "C"); // "0C" restera "0C", mais "C" sera converti en "CC"```  
-```color.getHexa (); // { R: "10", G: "0C", B: "CC", A: "FF" }```  
 
-Soit au format "RRGGBB", "RGB", "RRGGBBAA" ou "RGBA" avec `fromString` (le préfixe "#" peut être omis) :  
-```const color = Colors.fromString ("7EF");```  
-```color.getHexa (); // { R: "77", G: "EE", B: "FF", A: "FF" }```    
-```const color = Colors.fromString ("#77EEFFaa");```  
-```color.getHexa (); // { R: "77", G: "EE", B: "FF", A: "AA" }```  
-
-On peut utiliser aussi le nom d'une couleur avec la méthode statique `fromColorName` :  
-```const color = Colors.fromColorName ("indigo");```  
-```color.getHexa (); // { R: "4B", G: "00", B: "82", A: "FF" }```  
 
 # Manipulations
-On peut changer la composante de son choix, les formats sont mis à jour automatiquement.  
-Il existe une opération par composante pour chaque format (R, G, B, A ou H, S, L, A), ou on peut changer tout d'un coup.  
+On peut manipuler les composantes de la couleur dans le format qu'on veut, la mise à jour se fait automatiquement.  
 Ces opérations peuvent être chainées.  
-```Colors.fromColorName ("indigo").setRgbaR (255).setHslaL (.5).getHexa (); // { R: "FF", G: "00", B: "82", A: "FF" }```  
 
-###### Liste des méthodes disponibles :
-* `setRgbaR`
-* `setRgbaG`
-* `setRgbaB`
-* `setRgbaA`
-* `setRGBA`
-* `setNormalizedR`
-* `setNormalizedG`
-* `setNormalizedB`
-* `setNormalizedA`
-* `setNormalized`
-* `setHexaR`
-* `setHexaG`
-* `setHexaB`
-* `setHexaA`
-* `setHexa`
-* `setHslaR`
-* `setHslaG`
-* `setHslaB`
-* `setHslaA`
-* `setHSLA`
+* `setRgbaR (R)`
+* `setRgbaG (G)`
+* `setRgbaB (B)`
+* `setRgbaA (A)`
+* `setRGBA (R, G, B, [A = <currentAlphaValue>] )` : si non précisée, la valeur de l'alpha est laissée dans son état actuel.  
+* `setNormalizedR (R)`
+* `setNormalizedG (G)`
+* `setNormalizedB (B)`
+* `setNormalizedA (A)`
+* `setNormalized (R, G, B, [A = <currentAlphaValue>] )`
+* `setHexaR (R)`
+* `setHexaG (G)`
+* `setHexaB (B)`
+* `setHexaA (A)`
+* `setHexa (R, G, B, [A = <currentAlphaValue>] )`
+* `setHslaH (H)`
+* `setHslaS (S)`
+* `setHslaL (L)`
+* `setHslaA (A)`
+* `setHSLA (H, S, L, [A = <currentAlphaValue>] )`
+
+Exemple :   
+```Colors.fromColorName ("indigo").setRgbaR (255).setHslaL (0.1).setHexaG ("2").setNormalizedA (.5).getHexa (); // { R: "33", G: "22", B: "1A", A: "80" }```
 
 # Helpers
 ### CSS
 Obtenir un format CSS rapidement :  
-* `toCSS_hex` : chaine au format "#RRGGBB" 
-* `toCSS_hexa` : chaine au format "#RRGGBBAA"
-* `toCSS_hsl` : chaine au format "hsl(H, SS%, LL%)". Un paramètre permet d'avoir la précision voulue (2 chiffres après la virgule par défaut).
-* `toCSS_hsla` : chaine au format "hsl(H, SS%, LL%, A)". Le canal alpha est compris en 0 et 1, un paramètre supplémentaire permet d'ajuster sa précision (2 par défaut). 
-* `toCSS_rgb` : chaine au format "rgb(RR, GG, BB)"
-* `toCSS_rgba` : chaine au format "rgb(RR, GG, BB, AA)"  
+* `toCSS_hex ([noPrefix = false])` : chaine au format "#RRGGBB" ou "RRGGBB" si `noPrefix` est à `true`. 
+* `toCSS_hexa ([noPrefix = false])` : chaine au format "#RRGGBBAA".
+* `toCSS_hsl ([precision = 2])` : chaine au format `hsl(H, SS%, LL%)`. Le paramètre `precision` permet de préciser le nombre de chiffres après la virgule désiré.
+* `toCSS_hsla ([precision = 2], [precisionAlpha = 2])` : chaine au format `hsl(H, SS%, LL%, A)`. L'alpha est compris en 0 et 1, Le paramètre supplémentaire `precisionAlpha` permet d'ajuster sa précision. 
+* `toCSS_rgb ()` : chaine au format `rgb(RR, GG, BB)`.
+* `toCSS_rgba ()` : chaine au format `rgb(RR, GG, BB, AA)`.  
 
 Exemple :  
 ```Colors.fromHSLA (220.5, .709, .458, .5).toCSS_hex (); // "#2258C8"```
 
 ### Luminosité et gestion de la couleur
-On peut augmenter ou diminuer rapidement la luminosité de la couleur avec `lighten` et `darken`. Les paramètres s'expriment en pourcentage et peuvent varier de -100 à 100% :  
-```Colors.fromHSLA (220.5, .709, .458, .5).lighten (50); // augmente l'intensité de la couleur de 50%```  
-```Colors.fromHSLA (220.5, .709, .458, .5).darken (25); // assombri la couleur de 25%```  
+On peut augmenter ou diminuer rapidement la luminosité de la couleur. Par défaut, l'alpha n'est pas touché, sauf si le paramètre `applyToAlpha` est à `true`.
+* `lighten (value, [applyToAlpha = false])` : value est un pourcentage compris entre -100 et 100.
+* `darken (value, [applyToAlpha = false])`
 
-On peut aussi obtenir directement la couleur complémentaire avec `getComplementaryColor`.  
-Un nouvel object est renvoyé, ne modifiant pas l'original :  
-```const color = Colors.fromColorName ("indigo");```  
-```color.getComplementaryColor ().getRGBA (); // { R: 55, G: 130, B: 0, A: 255 }```    
-```color.getRGBA (); // { R: 75, G: 0, B: 130, A: 255 }```  
+Exemples :  
+```Colors.fromColorName ("indigo").lighten (50); // augmente l'intensité de la couleur de 50%```  
+```new Colors (255, 255, 255).darken (25); // assombri la couleur de 25%```  
 
 ### Autres outils
-Si necessaire, on peut tout simplement cloner l'object en cours avec `clone`:  
-```const color = Colors.fromColorName ("indigo");```  
-```const colorClone = color.clone ();```  
+* `clone ()` : copie la couleur actuelle dans une nouvelle instance. 
+* `getComplementaryColor ()` : retourne la couleur complémentaire sous la forme d'une nouvelle instance (la couleur original n'est pas modifiée). 
+* `getInt32ARGB ()` : la couleur est retournée sour la forme d'un entier 32 bits non signé au format ARGB (utile pour la manipulation de pixel par exemple). 
+* `getInt32BGRA ()` : pareil, mais au format BGRA.
 
-Deux fonctions existent aussi afin de récupérer la couleur dans un format 32 bits non signés, utile lors de la manipulation de pixels par exemple.  
-Il s'agit de `getInt32ARGB` et `getInt32BGRA` qui retourne respectivement la couleur au format AARRGGBB et BBGGRRAA.
+Exemples :  
+```const color = Colors.fromColorName ("indigo");```  
+```color.getComplementaryColor ().getRGBA (); // { R: 55, G: 130, B: 0, A: 255 }```    
+```color.getHexa (); // { R: "4B", G: "00", B: "82", A: "FF" }```  
+```color.getInt32BGRA (); // 2181057535 (0x82004bff)```
