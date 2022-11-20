@@ -66,11 +66,21 @@ class Colors
 	static fromString (cssColor = '000')
 	{
 		cssColor = cssColor.trim ().replace ('#', '');
-		const values = cssColor.length === 3 || cssColor.length === 4	// format "RGB" ou "RGBA"
-					   ? cssColor.match (/.?/g).filter (Boolean)
-					   : cssColor.length === 6 || cssColor.length === 8			// format "RRGGBB" ou "RRGGBBAA"
-						 ? cssColor.match (/.{0,2}/g).filter (Boolean)
-						 : [ '00', '00', '00', 'FF' ];
+		const len = cssColor.length;
+
+		// valeurs par défaut
+		let values = [ '00', '00', '00', 'FF' ];
+
+		// format "RGB" ou "RGBA"
+		if (len === 3 || len === 4)
+		{
+			values = cssColor.match (/.?/g).filter (Boolean);	// on filtre l'element vide revonyé par 'match'
+		}
+		// format "RRGGBB" ou "RRGGBBAA"
+		else if (len === 6 || len === 8)
+		{
+			values = cssColor.match (/.{2}/g).filter (Boolean);
+		}
 
 		return ( new Colors () ).setHexa (...values);
 	}
@@ -394,13 +404,14 @@ class Colors
 	lighten (value, applyToAlpha = false)
 	{
 		value = this.#clamp (value, -100, 100);
-		const L = this.getHSLA ().L;
-		const K = L * value / 100;
-		this.setHslaL (L + K);
-		if (applyToAlpha)
-		{
-			this.setHslaA (this.getHSLA ().A + K);
-		}
+		const hsla = this.getHSLA ();
+		const k = hsla.L * value / 100;
+		this.setHSLA (
+			hsla.H,
+			hsla.S,
+			hsla.L + k,
+			hsla.A + ( applyToAlpha ? k : 0 )
+		);
 		return this;
 	}
 
@@ -589,9 +600,7 @@ class Colors
 	 */
 	#calcFromHSLA ()
 	{
-		this.#setNormalized (
-			...Object.values (this.#hsla2normalized (...this.getHSLAasArray ()))
-		);
+		this.#setNormalized (...this.#hsla2normalized (this.getHSLA ()));
 		this.#RGBAfromNormalized ();
 		this.#setHexaFromRGBA (this.getRGBA ());
 	}
@@ -628,9 +637,7 @@ class Colors
 	 */
 	#HSLAfromNormalized ()
 	{
-		this.#setHSLA (
-			...Object.values (this.#normalized2hsla (this.getNormalized ()))
-		);
+		this.#setHSLA (...this.#normalized2hsla (this.getNormalized ()));
 	}
 
 
@@ -786,7 +793,7 @@ class Colors
 
 	/**
 	 * @param {iNORMALIZED} normalized
-	 * @return {iHSLA}
+	 * @return {number[]}
 	 * @private
 	 */
 	#normalized2hsla (normalized)
@@ -795,8 +802,9 @@ class Colors
 		const normG = normalized.G;
 		const normB = normalized.B;
 		const v = Math.max (normR, normG, normB);
+		const v2 = v + v;
 		const c = v - Math.min (normR, normG, normB);
-		const f = 1 - Math.abs (v + v - c - 1);
+		const f = 1 - Math.abs (v2 - c - 1);
 		const h = c
 			&& (
 				v === normR
@@ -806,34 +814,31 @@ class Colors
 				  : 4 + ( normR - normG ) / c
 			);
 
-		return {
-			H: 60 * ( h < 0 ? h + 6 : h ),
-			S: ( f ? c / f : 0 ),
-			L: ( ( v + v - c ) / 2 ),
-			A: normalized.A
-		};
+		return [
+			60 * ( h < 0 ? h + 6 : h ),
+			f ? c / f : 0,
+			( v2 - c ) / 2,
+			normalized.A
+		];
 	}
 
 
 	/**
 	 *
-	 * @param {number} h float 0.0-360.0
-	 * @param {number} s float 0.0-1.0
-	 * @param {number} l float 0.0-1.0
-	 * @param {number} a float 0.0-1.0
-	 * @return {iNORMALIZED}
+	 * @param {iHSLA} hsla
+	 * @return {number[]}
 	 * @private
 	 */
-	#hsla2normalized (h, s, l, a)
+	#hsla2normalized (hsla)
 	{
-		const v = s * Math.min (l, 1 - l);
-		const f = (n, k = ( n + h / 30 ) % 12) => l - v * Math.max (Math.min (k - 3, 9 - k, 1), -1);
-		return {
-			R: f (0),
-			G: f (8),
-			B: f (4),
-			A: a
-		};
+		const v = hsla.S * Math.min (hsla.L, 1 - hsla.L);
+		const f = (n, k = ( n + hsla.H / 30 ) % 12) => hsla.L - v * Math.max (Math.min (k - 3, 9 - k, 1), -1);
+		return [
+			f (0),
+			f (8),
+			f (4),
+			hsla.A
+		];
 	}
 }
 
