@@ -1,5 +1,5 @@
 /**
- * v1.0 19112022
+ * v1.1 20112022
  */
 class Colors
 {
@@ -25,8 +25,8 @@ class Colors
 	 */
 	constructor (r = 0, g = 0, b = 0, a = 255)
 	{
-		this._setRGBA (r, g, b, a);
-		this._calcFromRGBA ();
+		this.#setRGBA (r, g, b, a);
+		this.#calcFromRGBA ();
 	}
 
 
@@ -108,7 +108,8 @@ class Colors
 	 */
 	getInt32ARGB ()
 	{
-		return ( this.rgba.A << 24 >>> 0 ) + ( this.rgba.R << 16 >>> 0 ) + ( this.rgba.G << 8 >>> 0 ) + this.rgba.B;
+		const rgba = this.getRGBA ();
+		return ( rgba.A << 24 >>> 0 ) + ( rgba.R << 16 >>> 0 ) + ( rgba.G << 8 >>> 0 ) + rgba.B;
 	}
 
 
@@ -118,7 +119,8 @@ class Colors
 	 */
 	getInt32BGRA ()
 	{
-		return ( this.rgba.B << 24 >>> 0 ) + ( this.rgba.G << 16 >>> 0 ) + ( this.rgba.R << 8 >>> 0 ) + this.rgba.A;
+		const rgba = this.getRGBA ();
+		return ( rgba.B << 24 >>> 0 ) + ( rgba.G << 16 >>> 0 ) + ( rgba.R << 8 >>> 0 ) + rgba.A;
 	}
 
 
@@ -174,7 +176,7 @@ class Colors
 
 	/**
 	 *
-	 * @return {number[]}
+	 * @return {string[]}
 	 */
 	getHexaAsArray ()
 	{
@@ -207,11 +209,9 @@ class Colors
 	 * @param {number} value int 0-255
 	 * @return {Colors}
 	 */
-	setRgbaR (value)
+	setRgbaR (value = this.rgba.R)
 	{
-		this._setRGBA (value, this.rgba.G, this.rgba.B, this.rgba.A);
-		this._calcFromRGBA ();
-		return this;
+		return this.setRGBA (value, this.rgba.G, this.rgba.B, this.rgba.A);
 	}
 
 
@@ -220,11 +220,9 @@ class Colors
 	 * @param {number} value int 0-255
 	 * @return {Colors}
 	 */
-	setRgbaG (value)
+	setRgbaG (value = this.rgba.G)
 	{
-		this._setRGBA (this.rgba.R, value, this.rgba.B, this.rgba.A);
-		this._calcFromRGBA ();
-		return this;
+		return this.setRGBA (this.rgba.R, value, this.rgba.B, this.rgba.A);
 	}
 
 
@@ -233,11 +231,9 @@ class Colors
 	 * @param {number} value int 0-255
 	 * @return {Colors}
 	 */
-	setRgbaB (value)
+	setRgbaB (value = this.rgba.B)
 	{
-		this._setRGBA (this.rgba.R, this.rgba.G, value, this.rgba.A);
-		this._calcFromRGBA ();
-		return this;
+		return this.setRGBA (this.rgba.R, this.rgba.G, value, this.rgba.A);
 	}
 
 
@@ -246,11 +242,9 @@ class Colors
 	 * @param {number} value int 0-255
 	 * @return {Colors}
 	 */
-	setRgbaA (value)
+	setRgbaA (value = this.rgba.A)
 	{
-		this._setRGBA (this.rgba.R, this.rgba.G, this.rgba.B, value);
-		this._calcFromRGBA ();
-		return this;
+		return this.setRGBA (this.rgba.R, this.rgba.G, this.rgba.B, value);
 	}
 
 
@@ -262,10 +256,10 @@ class Colors
 	 * @param {number} a int 0-255
 	 * @return {Colors}
 	 */
-	setRGBA (r, g, b, a = this.rgba.A)
+	setRGBA (r = this.rgba.R, g = this.rgba.G, b = this.rgba.B, a = this.rgba.A)
 	{
-		this._setRGBA (r, g, b, a);
-		this._calcFromRGBA ();
+		this.#setRGBA (r, g, b, a);
+		this.#calcFromRGBA ();
 		return this;
 	}
 
@@ -275,11 +269,9 @@ class Colors
 	 * @param {number} value float 0.0-1.0
 	 * @return {Colors}
 	 */
-	setNormalizedR (value)
+	setNormalizedR (value = this.normalized.R)
 	{
-		this._setNormalized (value, this.normalized.G, this.normalized.B, this.normalized.A);
-		this._calcFromNormalized ();
-		return this;
+		return this.setNormalized (value, this.normalized.G, this.normalized.B, this.normalized.A);
 	}
 
 
@@ -288,11 +280,9 @@ class Colors
 	 * @param {number} value float 0.0-1.0
 	 * @return {Colors}
 	 */
-	setNormalizedG (value)
+	setNormalizedG (value = this.normalized.G)
 	{
-		this._setNormalized (this.normalized.R, value, this.normalized.B, this.normalized.A);
-		this._calcFromNormalized ();
-		return this;
+		return this.setNormalized (this.normalized.R, value, this.normalized.B, this.normalized.A);
 	}
 
 
@@ -301,11 +291,9 @@ class Colors
 	 * @param {number} value float 0.0-1.0
 	 * @return {Colors}
 	 */
-	setNormalizedB (value)
+	setNormalizedB (value = this.normalized.B)
 	{
-		this._setNormalized (this.normalized.R, this.normalized.G, value, this.normalized.A);
-		this._calcFromNormalized ();
-		return this;
+		return this.setNormalized (this.normalized.R, this.normalized.G, value, this.normalized.A);
 	}
 
 
@@ -314,11 +302,9 @@ class Colors
 	 * @param {number} value float 0.0-1.0
 	 * @return {Colors}
 	 */
-	setNormalizedA (value)
+	setNormalizedA (value = this.normalized.A)
 	{
-		this._setNormalized (this.normalized.R, this.normalized.G, this.normalized.B, value);
-		this._calcFromNormalized ();
-		return this;
+		return this.setNormalized (this.normalized.R, this.normalized.G, this.normalized.B, value);
 	}
 
 
@@ -330,10 +316,10 @@ class Colors
 	 * @param {number} a float 0.0-1.0
 	 * @return {Colors}
 	 */
-	setNormalized (r, g, b, a = this.normalized.A)
+	setNormalized (r = this.normalized.R, g = this.normalized.G, b = this.normalized.B, a = this.normalized.A)
 	{
-		this._setNormalized (r, g, b, a);
-		this._calcFromNormalized ();
+		this.#setNormalized (r, g, b, a);
+		this.#calcFromNormalized ();
 		return this;
 	}
 
@@ -343,11 +329,9 @@ class Colors
 	 * @param {string} value "0"-"F" ou "00"-FF"
 	 * @return {Colors}
 	 */
-	setHexaR (value)
+	setHexaR (value = this.hexa.R)
 	{
-		this._setHexa (value, this.hexa.G, this.hexa.B, this.hexa.A);
-		this._calcFromHexa ();
-		return this;
+		return this.setHexa (value, this.hexa.G, this.hexa.B, this.hexa.A);
 	}
 
 
@@ -356,11 +340,9 @@ class Colors
 	 * @param {string} value "0"-"F" ou "00"-FF"
 	 * @return {Colors}
 	 */
-	setHexaG (value)
+	setHexaG (value = this.hexa.G)
 	{
-		this._setHexa (this.hexa.R, value, this.hexa.B, this.hexa.A);
-		this._calcFromHexa ();
-		return this;
+		return this.setHexa (this.hexa.R, value, this.hexa.B, this.hexa.A);
 	}
 
 
@@ -369,11 +351,9 @@ class Colors
 	 * @param {string} value "0"-"F" ou "00"-FF"
 	 * @return {Colors}
 	 */
-	setHexaB (value)
+	setHexaB (value = this.hexa.B)
 	{
-		this._setHexa (this.hexa.R, this.hexa.G, value, this.hexa.A);
-		this._calcFromHexa ();
-		return this;
+		return this.setHexa (this.hexa.R, this.hexa.G, value, this.hexa.A);
 	}
 
 
@@ -382,11 +362,9 @@ class Colors
 	 * @param {string} value "0"-"F" ou "00"-FF"
 	 * @return {Colors}
 	 */
-	setHexaA (value)
+	setHexaA (value = this.hexa.A)
 	{
-		this._setHexa (this.hexa.R, this.hexa.G, this.hexa.B, value);
-		this._calcFromHexa ();
-		return this;
+		return this.setHexa (this.hexa.R, this.hexa.G, this.hexa.B, value);
 	}
 
 
@@ -398,10 +376,10 @@ class Colors
 	 * @param {string} a "0"-"F" ou "00"-FF"
 	 * @return {Colors}
 	 */
-	setHexa (r, g, b, a = this.hexa.A)
+	setHexa (r = this.hexa.R, g = this.hexa.G, b = this.hexa.B, a = this.hexa.A)
 	{
-		this._setHexa (r, g, b, a);
-		this._calcFromHexa ();
+		this.#setHexa (r, g, b, a);
+		this.#calcFromHexa ();
 		return this;
 	}
 
@@ -414,7 +392,7 @@ class Colors
 	 */
 	lighten (value, applyToAlpha = false)
 	{
-		value = this._clamp (value, -100, 100);
+		value = this.#clamp (value, -100, 100);
 		const L = this.getHSLA ().L;
 		const K = L * value / 100;
 		this.setHslaL (L + K);
@@ -463,11 +441,9 @@ class Colors
 	 * @param {number} value float 0.0-360.0
 	 * @return {Colors}
 	 */
-	setHslaH (value)
+	setHslaH (value = this.hsla.H)
 	{
-		this._setHSLA (value, this.hsla.S, this.hsla.L, this.hsla.A);
-		this._calcFromHSLA ();
-		return this;
+		return this.setHSLA (value, this.hsla.S, this.hsla.L, this.hsla.A);
 	}
 
 
@@ -476,11 +452,9 @@ class Colors
 	 * @param {number} value float 0.0-1.0
 	 * @return {Colors}
 	 */
-	setHslaS (value)
+	setHslaS (value = this.hsla.S)
 	{
-		this._setHSLA (this.hsla.H, value, this.hsla.L, this.hsla.A);
-		this._calcFromHSLA ();
-		return this;
+		return this.setHSLA (this.hsla.H, value, this.hsla.L, this.hsla.A);
 	}
 
 
@@ -489,11 +463,9 @@ class Colors
 	 * @param {number} value float 0.0-1.0
 	 * @return {Colors}
 	 */
-	setHslaL (value)
+	setHslaL (value = this.hsla.L)
 	{
-		this._setHSLA (this.hsla.H, this.hsla.S, value, this.hsla.A);
-		this._calcFromHSLA ();
-		return this;
+		return this.setHSLA (this.hsla.H, this.hsla.S, value, this.hsla.A);
 	}
 
 
@@ -502,11 +474,9 @@ class Colors
 	 * @param {number} value float 0.0-1.0
 	 * @return {Colors}
 	 */
-	setHslaA (value)
+	setHslaA (value = this.hsla.A)
 	{
-		this._setHSLA (this.hsla.H, this.hsla.S, this.hsla.L, value);
-		this._calcFromHSLA ();
-		return this;
+		return this.setHSLA (this.hsla.H, this.hsla.S, this.hsla.L, value);
 	}
 
 
@@ -518,10 +488,10 @@ class Colors
 	 * @param {number} a float 0.0-1.0
 	 * @return {Colors}
 	 */
-	setHSLA (h, s, l, a = this.hsla.A)
+	setHSLA (h = this.hsla.H, s = this.hsla.S, l = this.hsla.L, a = this.hsla.A)
 	{
-		this._setHSLA (h, s, l, a);
-		this._calcFromHSLA ();
+		this.#setHSLA (h, s, l, a);
+		this.#calcFromHSLA ();
 		return this;
 	}
 
@@ -594,70 +564,48 @@ class Colors
 	/**
 	 * @private
 	 */
-	_calcFromRGBA ()
+	#calcFromRGBA ()
 	{
-		this._normalizedFromRgba ();
-
-		this._setHexaFromRGBA (
-			this.getRGBA ()
-		);
-
-		this._HSLAfromNormalized ();
+		this.#normalizedFromRgba ();
+		this.#setHexaFromRGBA (this.getRGBA ());
+		this.#HSLAfromNormalized ();
 	}
 
 
 	/**
 	 * @private
 	 */
-	_calcFromNormalized ()
+	#calcFromNormalized ()
 	{
-		this._RGBAfromNormalized ();
-
-		this._setHexaFromRGBA (
-			this.getRGBA ()
-		);
-
-		this._HSLAfromNormalized ();
+		this.#RGBAfromNormalized ();
+		this.#setHexaFromRGBA (this.getRGBA ());
+		this.#HSLAfromNormalized ();
 	}
 
 
 	/**
 	 * @private
 	 */
-	_calcFromHSLA ()
+	#calcFromHSLA ()
 	{
-		const normalized = this._hsla2normalized (this.hsla.H, this.hsla.S, this.hsla.L, this.hsla.A);
-
-		this._setNormalized (
-			normalized.R,
-			normalized.G,
-			normalized.B,
-			normalized.A
+		this.#setNormalized (
+			...Object.values (this.#hsla2normalized (...this.getHSLAasArray ()))
 		);
-
-		this._RGBAfromNormalized ();
-
-		this._setHexaFromRGBA (
-			this.getRGBA ()
-		);
+		this.#RGBAfromNormalized ();
+		this.#setHexaFromRGBA (this.getRGBA ());
 	}
 
 
 	/**
 	 * @private
 	 */
-	_calcFromHexa ()
+	#calcFromHexa ()
 	{
-		this._setRGBA (
-			parseInt (this.hexa.R, 16),
-			parseInt (this.hexa.G, 16),
-			parseInt (this.hexa.B, 16),
-			parseInt (this.hexa.A, 16)
+		this.#setRGBA (
+			...this.getHexaAsArray ().map (v => parseInt (v, 16))
 		);
-
-		this._normalizedFromRgba ();
-
-		this._HSLAfromNormalized ();
+		this.#normalizedFromRgba ();
+		this.#HSLAfromNormalized ();
 	}
 
 
@@ -665,13 +613,10 @@ class Colors
 	 *
 	 * @private
 	 */
-	_normalizedFromRgba ()
+	#normalizedFromRgba ()
 	{
-		this._setNormalized (
-			this.rgba.R / 255,
-			this.rgba.G / 255,
-			this.rgba.B / 255,
-			this.rgba.A / 255
+		this.#setNormalized (
+			...this.getRGBAasArray ().map (v => v / 255)
 		);
 	}
 
@@ -680,12 +625,10 @@ class Colors
 	 *
 	 * @private
 	 */
-	_HSLAfromNormalized ()
+	#HSLAfromNormalized ()
 	{
-		this._setHSLA (
-			...Object.values (
-				this._normalized2hsla (this.getNormalized ())
-			)
+		this.#setHSLA (
+			...Object.values (this.#normalized2hsla (this.getNormalized ()))
 		);
 	}
 
@@ -694,14 +637,9 @@ class Colors
 	 *
 	 * @private
 	 */
-	_RGBAfromNormalized ()
+	#RGBAfromNormalized ()
 	{
-		this._setRGBA (
-			this.normalized.R * 255,
-			this.normalized.G * 255,
-			this.normalized.B * 255,
-			this.normalized.A * 255
-		);
+		this.#setRGBA (...this.getNormalizedAsArray ().map (v => v * 255));
 	}
 
 
@@ -712,13 +650,13 @@ class Colors
 	 * @param {number} a
 	 * @private
 	 */
-	_setRGBA (r, g, b, a)
+	#setRGBA (r, g, b, a)
 	{
 		this.rgba = {
-			R: this._colorClamp (r),
-			G: this._colorClamp (g),
-			B: this._colorClamp (b),
-			A: this._colorClamp (a)
+			R: this.#colorClamp (r),
+			G: this.#colorClamp (g),
+			B: this.#colorClamp (b),
+			A: this.#colorClamp (a)
 		};
 	}
 
@@ -730,13 +668,13 @@ class Colors
 	 * @param {number} a int 0-255
 	 * @private
 	 */
-	_setNormalized (r, g, b, a)
+	#setNormalized (r, g, b, a)
 	{
 		this.normalized = {
-			R: this._clamp (r, 0, 1),
-			G: this._clamp (g, 0, 1),
-			B: this._clamp (b, 0, 1),
-			A: this._clamp (a, 0, 1)
+			R: this.#clamp (r, 0, 1),
+			G: this.#clamp (g, 0, 1),
+			B: this.#clamp (b, 0, 1),
+			A: this.#clamp (a, 0, 1)
 		};
 	}
 
@@ -749,13 +687,13 @@ class Colors
 	 * @return {iHEXA}
 	 * @private
 	 */
-	_setHexa (r, g, b, a)
+	#setHexa (r, g, b, a)
 	{
 		this.hexa = {
-			R: this._cleanHexa (r),
-			G: this._cleanHexa (g),
-			B: this._cleanHexa (b),
-			A: this._cleanHexa (a)
+			R: this.#cleanHexa (r),
+			G: this.#cleanHexa (g),
+			B: this.#cleanHexa (b),
+			A: this.#cleanHexa (a)
 		};
 	}
 
@@ -765,13 +703,13 @@ class Colors
 	 * @return {iHEXA}
 	 * @private
 	 */
-	_setHexaFromRGBA (rgba)
+	#setHexaFromRGBA (rgba)
 	{
 		this.hexa = {
-			R: this._dec2hex (rgba.R),
-			G: this._dec2hex (rgba.G),
-			B: this._dec2hex (rgba.B),
-			A: this._dec2hex (rgba.A)
+			R: this.#dec2hex (rgba.R),
+			G: this.#dec2hex (rgba.G),
+			B: this.#dec2hex (rgba.B),
+			A: this.#dec2hex (rgba.A)
 		};
 	}
 
@@ -783,13 +721,13 @@ class Colors
 	 * @param {number} a float 0.0-1.0
 	 * @private
 	 */
-	_setHSLA (h, s, l, a)
+	#setHSLA (h, s, l, a)
 	{
 		this.hsla = {
 			H: h % 360,
-			S: this._clamp (s, 0, 1),
-			L: this._clamp (l, 0, 1),
-			A: this._clamp (a, 0, 1)
+			S: this.#clamp (s, 0, 1),
+			L: this.#clamp (l, 0, 1),
+			A: this.#clamp (a, 0, 1)
 		};
 	}
 
@@ -800,9 +738,9 @@ class Colors
 	 * @returns {number}
 	 * @private
 	 */
-	_colorClamp (num)
+	#colorClamp (num)
 	{
-		return this._clamp (Math.round (num), 0, 255);
+		return this.#clamp (Math.round (num), 0, 255);
 	}
 
 
@@ -814,7 +752,7 @@ class Colors
 	 * @return {number}
 	 * @private
 	 */
-	_clamp (value, min, max)
+	#clamp (value, min, max)
 	{
 		return Math.min (Math.max (value, min), max);
 	}
@@ -826,9 +764,9 @@ class Colors
 	 * @returns {string} "00"-"FF"
 	 * @private
 	 */
-	_dec2hex (v)
+	#dec2hex (v)
 	{
-		return this._colorClamp (v).toString (16).padStart (2, "0").toUpperCase ();
+		return this.#colorClamp (v).toString (16).padStart (2, "0").toUpperCase ();
 	}
 
 
@@ -838,7 +776,7 @@ class Colors
 	 * @return {string}	"0F" -> "0F" (15), "F" -> "FF" (255)
 	 * @private
 	 */
-	_cleanHexa (value)
+	#cleanHexa (value)
 	{
 		const cleaned = value.replace (/[^0-9A-F]/ig, '').substring (0, 2).toUpperCase ();
 		return cleaned.length === 1 ? cleaned + cleaned : cleaned;
@@ -850,7 +788,7 @@ class Colors
 	 * @return {iHSLA}
 	 * @private
 	 */
-	_normalized2hsla (normalized)
+	#normalized2hsla (normalized)
 	{
 		const normR = normalized.R;
 		const normG = normalized.G;
@@ -885,7 +823,7 @@ class Colors
 	 * @return {iNORMALIZED}
 	 * @private
 	 */
-	_hsla2normalized (h, s, l, a)
+	#hsla2normalized (h, s, l, a)
 	{
 		const v = s * Math.min (l, 1 - l);
 		const f = (n, k = ( n + h / 30 ) % 12) => l - v * Math.max (Math.min (k - 3, 9 - k, 1), -1);

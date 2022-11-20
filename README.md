@@ -1,5 +1,6 @@
 Simple gestion des couleurs en JS (ES6).  
-Pas de dépendances, et peut être facilement adapté pour fonctionner sous forme de module.
+Pas de dépendances, et peut être facilement adapté pour fonctionner sous forme de module.  
+Les types utilisés (_interfaces_) sont décrits, rendant facile l'éventuel portage vers du TypeScript.
 
 # Bases
 
@@ -29,7 +30,7 @@ Valeurs flottantes comprises entre 0 et 1 :
 * `getNormalizedAsArray ()`
 
 
-##### Hexa
+##### Hexadecimal
 Texte en majuscule sur 2 caractères, compris entre "00" et "FF" :  
 * `getHexa ()` : retourne un objet de type `{ R: "22", G: "58", B: "C8", A: "91" }`
 * `getHexaAsArray ()`
