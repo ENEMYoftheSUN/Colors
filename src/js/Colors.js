@@ -1,7 +1,7 @@
 /**
- * v1.1 20112022
+ * v1.2 20112025
  */
-class Colors
+export class Colors
 {
 	/** @type {iRGBA} */
 	rgba;
@@ -397,7 +397,27 @@ class Colors
 
 	/**
 	 *
-	 * @param {number} value -100 - 100 Pourcentage (entre -100 et 100%) de luminosité en plus à appliquer
+	 * @param {number} value -100 - 100 Pourcentage (entre -100 et 100%) de saturation en plus à appliquer. Retourne une copie.
+	 * @return {Colors}
+	 */
+	saturate (value)
+	{
+		value = this.#clamp (value, -100, 100);
+		const hsla = this.getHSLA ();
+		const k = hsla.S * value / 100;
+		return this.clone ()
+			.setHSLA (
+				hsla.H,
+				hsla.S + k,
+				hsla.L,
+				hsla.A
+			);
+	}
+
+
+	/**
+	 *
+	 * @param {number} value -100 - 100 Pourcentage (entre -100 et 100%) de luminosité en plus à appliquer. Retourne une copie.
 	 * @param {boolean} applyToAlpha Si vrai, l'opération s'applique aussi au canal alpha
 	 * @return {Colors}
 	 */
@@ -406,19 +426,19 @@ class Colors
 		value = this.#clamp (value, -100, 100);
 		const hsla = this.getHSLA ();
 		const k = hsla.L * value / 100;
-		this.setHSLA (
-			hsla.H,
-			hsla.S,
-			hsla.L + k,
-			hsla.A + ( applyToAlpha ? k : 0 )
-		);
-		return this;
+		return this.clone ()
+			.setHSLA (
+				hsla.H,
+				hsla.S,
+				hsla.L + k,
+				hsla.A + ( applyToAlpha ? k : 0 )
+			);
 	}
 
 
 	/**
 	 *
-	 * @param {number} value -100 - 100 Pourcentage (entre -100 et 100%) de luminosité en moins à appliquer
+	 * @param {number} value -100 - 100 Pourcentage (entre -100 et 100%) de luminosité en moins à appliquer. Retourne une copie.
 	 * @param {boolean} applyToAlpha Si vrai, l'opération s'applique aussi au canal alpha
 	 * @return {Colors}
 	 */
