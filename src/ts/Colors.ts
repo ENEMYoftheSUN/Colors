@@ -1,7 +1,3 @@
-/**
- * v1.2 20112025
- */
-
 import { iRGBA, iRGBAarray }             from './iRGBA';
 import { iNORMALIZED, iNORMALIZEDarray } from './iNORMALIZED';
 import { iHEXA, iHEXAarray }             from './iHEXA';
@@ -9,7 +5,7 @@ import { iHSLA, iHSLAarray }             from './iHSLA';
 
 
 /**
- *
+ * v1.2 20112025
  */
 export class Colors
 {

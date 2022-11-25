@@ -1,6 +1,7 @@
 /**
  * v1.2 20112025
  */
+
 export class Colors
 {
 	/** @type {iRGBA} */

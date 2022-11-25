@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "uglify": "uglifyjs src/js/Colors.js -o src/js/Colors.min.js"
+  },
   "devDependencies": {
     "uglify-js": "^3.17.4"
   }
