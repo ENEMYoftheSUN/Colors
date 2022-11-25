@@ -105,12 +105,14 @@ Exemple :
 ```Colors.fromHSLA (220.5, .709, .458, .5).toCSS_hex (); // "#2258C8"```
 
 ### Luminosité et gestion de la couleur
-On peut augmenter ou diminuer rapidement la luminosité de la couleur. Par défaut, l'alpha n'est pas touché, sauf si le paramètre `applyToAlpha` est à `true`.
+On peut augmenter ou diminuer rapidement la luminosité de la couleur, ou sa saturation. Par défaut, l'alpha n'est pas touché, sauf si le paramètre `applyToAlpha` est à `true`.  
+Une copie est renvoyée.
 * `lighten (value, [applyToAlpha = false])` : value est un pourcentage compris entre -100 et 100.
 * `darken (value, [applyToAlpha = false])`
+* `saturate (value)`
 
 Exemples :  
-```Colors.fromColorName ("indigo").lighten (50); // augmente l'intensité de la couleur de 50%```  
+```Colors.fromColorName ("indigo").lighten (50); // renvoit une nouvelle couleur avec une intensité augmenté de 50%, la couleur original reste intacte```  
 ```new Colors (255, 255, 255).darken (25); // assombri la couleur de 25%```  
 
 ### Autres outils
