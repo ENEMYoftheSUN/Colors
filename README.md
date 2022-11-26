@@ -1,6 +1,11 @@
-Simple gestion des couleurs en JS (ES6).  
-Pas de dépendances, et peut être facilement adapté pour fonctionner sous forme de module.  
-Les types utilisés (_interfaces_) sont décrits, rendant facile l'éventuel portage vers du TypeScript.
+Simple gestion des couleurs en JS.  
+Pas de dépendances dans le code. Minification et version TypeScript dispo.
+
+Pour minifier, il faut disposer de UglifyJS 3+ installé en global :  
+`npm install uglify-js -g`
+
+Puis lancer le script qui va minifier Colors.js :  
+`npm run uglify`
 
 # Bases
 
@@ -106,7 +111,7 @@ Exemple :
 
 ### Luminosité et gestion de la couleur
 On peut augmenter ou diminuer rapidement la luminosité de la couleur, ou sa saturation. Par défaut, l'alpha n'est pas touché, sauf si le paramètre `applyToAlpha` est à `true`.  
-Une copie est renvoyée.
+Ces méthodes renvoient une nouvelle instance.
 * `lighten (value, [applyToAlpha = false])` : value est un pourcentage compris entre -100 et 100.
 * `darken (value, [applyToAlpha = false])`
 * `saturate (value)`
