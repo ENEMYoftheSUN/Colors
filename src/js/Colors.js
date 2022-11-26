@@ -1,5 +1,5 @@
 /**
- * v1.2 20112025
+ * v1.2 20222025
  */
 
 export class Colors
